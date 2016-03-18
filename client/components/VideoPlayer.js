@@ -11,3 +11,5 @@ var VideoPlayer = () => (
 );
 
 window.VideoPlayer = VideoPlayer;
+
+
