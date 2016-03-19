@@ -1,22 +1,22 @@
-// var App = () => (
-//   <div>
-//     <Nav />
-//     <div className="col-md-7">
-//       <VideoPlayer exampleVideo={exampleVideoData[0]} />
-//     </div>
-//     <div className="col-md-5">
-//       <VideoList videos={exampleVideoData} />
-//     </div>
-//   </div>
-// );
+// import { debounce} from 'lodash';
+// import react, {Component} from 'react';
+// import {debounce} from 'throttle-debounce';
+// var _ = require('lodash');
+
 class App extends React.Component {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      currentVideo: props.videos[0],
-      videoList: props.videos
+      currentVideo: {
+        id: {videoId: ''},
+        snippet: {
+          title: 'No video is loaded',
+          description: 'No description'
+        } 
+      },
+      videoList: []
     };
 
   }
@@ -25,18 +25,34 @@ class App extends React.Component {
     this.setState({
       currentVideo: clickedMovie
     });
-    console.log(this);
+  }
+  
+
+
+
+  searchHandler(text) {
+    searchYouTube(text, (data) => this.setState({
+      currentVideo: data[0],
+      videoList: data
+    }));
+  }
+
+  componentDidMount() {
+    searchYouTube('banana', (data) => this.setState({
+      currentVideo: data[0],
+      videoList: data
+    }));
   }
 
   render() {
     return (
       <div>
-        <Nav />
+        <Nav change={_.debounce(this.searchHandler.bind(this), 400)} />
         <div className="col-md-7">
           <VideoPlayer video={this.state.currentVideo} />
         </div>
         <div className="col-md-5">
-          <VideoList videos={this.state.videoList} handler={this.clickHandler.bind(this)}/>
+          <VideoList videos={this.state.videoList} click={this.clickHandler.bind(this)} />
         </div>
       </div>
     );
@@ -44,20 +60,4 @@ class App extends React.Component {
 
 }
 
-
-// var App = () => (
-//   <div>
-//     <Nav />
-//     <div className="col-md-7">
-//       <VideoPlayer exampleVideo={exampleVideoData[0]} />
-//     </div>
-//     <div className="col-md-5">
-//       <VideoList videos={exampleVideoData} />
-//     </div>
-//   </div>
-// );
-
-
-
-
-ReactDOM.render(<App videos={exampleVideoData}/>, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
